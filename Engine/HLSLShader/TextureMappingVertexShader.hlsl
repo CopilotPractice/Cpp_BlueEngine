@@ -21,8 +21,9 @@ struct VertexOutput
 VertexOutput main(VertexInput input)
 {
     VertexOutput output;
-    //output.position = float4(input.position, 1);
+    //output.position = float4(input.position, 1);       행렬이 gpu쪽에서 안 넘어갔을 때
     output.position = mul(float4(input.position, 1), worldMatrix);
+    //                                                  TRS가 곱해져서 들어옴
     output.color = input.color;
     output.texCoord = input.texCoord;
     

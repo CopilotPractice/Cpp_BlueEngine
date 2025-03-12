@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 #include <Windows.h>
-#include <d3d11.h>
 #include "Type.h"
+#include <d3d11.h>
 
 namespace Blue
 {
@@ -31,16 +31,26 @@ namespace Blue
 		// ΩÃ±€≈Ê ¡¢±Ÿ «‘ºˆ.
 		static Engine& Get();
 
+		// Getter.
 		ID3D11Device& Device() const;
 		ID3D11DeviceContext& Context() const;
 
 	protected:
-
+		
 		// √¢ ∞¥√º.
 		std::shared_ptr<class Window> window;
 
 		// ∑ª¥ı∑Ø ∞¥√º.
 		std::shared_ptr<class Renderer> renderer;
+
+		// ºŒ¿Ã¥ı ∑Œ¥ı ∞¥√º.
+		std::unique_ptr<class ShaderLoader> shaderLoader;
+
+		// ≈ÿΩ∫√≥ ∑Œ¥ı ∞¥√º.
+		std::unique_ptr<class TextureLoader> textureLoader;
+
+		// ∏µ® ∑Œ¥ı ∞¥√º.
+		std::unique_ptr<class ModelLoader> modelLoader;
 
 		// ΩÃ±€≈Ê ∞¥√º.
 		static Engine* instance;

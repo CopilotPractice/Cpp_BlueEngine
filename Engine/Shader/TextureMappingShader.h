@@ -14,6 +14,8 @@ namespace Blue
 		virtual void Bind() override;
 
 	private:
-		std::unique_ptr<class Texture> texture;
+		// 텍스처 리소스.
+		//std::unique_ptr<class Texture> texture;
+		std::weak_ptr<class Texture> texture;
 	};
 }

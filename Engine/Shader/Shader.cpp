@@ -2,16 +2,19 @@
 #include <d3dcompiler.h>
 #include "../Core/Engine.h"
 
-namespace Blue {
-	Blue::Shader::Shader(const std::wstring& name) // 이름을 받아서 shader 컴파일
+namespace Blue
+{
+	Shader::Shader(const std::wstring& name)
 		: name(name)
 	{
+		// 경로 추가.
 		wchar_t path[256] = { };
 		swprintf_s(path, 256, L"../CompiledShader/%sVertexShader.cso", name.c_str());
 
-
+		// 장치 객체 얻어오기.
 		ID3D11Device& device = Engine::Get().Device();
 
+		// CSO 로드.
 		auto result = D3DReadFileToBlob(path, &vertexShaderBuffer);
 		if (FAILED(result))
 		{
@@ -47,19 +50,12 @@ namespace Blue {
 
 		// 입력 레이아웃.
 		// 정점 쉐이더에 전달할 정점 데이터가 어떻게 생겼는지 알려줌.
-		//LPCSTR SemanticName;
-		//UINT SemanticIndex;
-		//DXGI_FORMAT Format;
-		//UINT InputSlot;
-		//UINT AlignedByteOffset;
-		//D3D11_INPUT_CLASSIFICATION InputSlotClass;
-		//UINT InstanceDataStepRate;
 		D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-		{ // input의 형태(구조)를 지정해줘야함
+		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};//                                              ↑offset의 갯수
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
 
 		result = device.CreateInputLayout(
 			inputDesc,
@@ -81,25 +77,21 @@ namespace Blue {
 			__debugbreak();
 		}
 
-		// .
-		//ID3DBlob* pixelShaderBuffer = nullptr;
-
+		// CSO 로드.
 		swprintf_s(path, 256, L"../CompiledShader/%sPixelShader.cso", name.c_str());
+
 		result = D3DReadFileToBlob(path, &pixelShaderBuffer);
 		if (FAILED(result))
 		{
 			MessageBoxA(
 				nullptr,
-				"Failed to read pixel shader buffer",
+				"Failed to read pixel shader object",
 				"Error",
 				MB_OK
 			);
 
 			__debugbreak();
 		}
-
-		
-		
 
 		// 쉐이더 생성.
 		result = device.CreatePixelShader(
@@ -121,42 +113,44 @@ namespace Blue {
 			__debugbreak();
 		}
 	}
+
 	Shader::~Shader()
 	{
-		// DX 리소스.
-		if (inputlayout) {
+		// DX 리소스 해제.
+		if (inputlayout)
+		{
 			inputlayout->Release();
 		}
-		
-		if (vertexShader) {
+		if (vertexShader)
+		{
 			vertexShader->Release();
 		}
-		
-		if (vertexShaderBuffer) {
+		if (vertexShaderBuffer)
+		{
 			vertexShaderBuffer->Release();
 		}
-		
-		if(pixelShader){
+		if (pixelShader)
+		{
 			pixelShader->Release();
 		}
-		
 		if (pixelShaderBuffer)
 		{
 			pixelShaderBuffer->Release();
 		}
-		
 	}
+
 	void Shader::Bind()
 	{
-		ID3D11DeviceContext& context = Engine::Get().Context();
+		// 장치 문맥(DeviceContext) 얻어오기.
+		static ID3D11DeviceContext& context = Engine::Get().Context();
 
-		// 입력 레이아웃
+		// 입력 레이아웃 전달.
 		context.IASetInputLayout(inputlayout);
 
-		// 조립할 모양 설정
+		// 조립할 모양 설정.
 		context.IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// 쉐이더 설정
+		// 쉐이더 설정.
 		context.VSSetShader(vertexShader, nullptr, 0);
 		context.PSSetShader(pixelShader, nullptr, 0);
 	}

@@ -2,17 +2,17 @@
 
 namespace Blue
 {
-    Window::Window(
-        uint32 width,
-        uint32 height,
-        const std::wstring& title,
-        HINSTANCE instance,
-        WNDPROC messageProcedure)
-        : width(width),
-        height(height),
-        title(title),
+	Window::Window(
+		uint32 width, 
+		uint32 height, 
+		const std::wstring& title, 
+		HINSTANCE instance, 
+		WNDPROC messageProcedure)
+        : width(width), 
+        height(height), 
+        title(title), 
         instance(instance)
-    {
+	{
         // 창 생성에 필요한 설정 구조체.
         WNDCLASS wc = { };
         // 메시지 처리를 위한 콜백 전달.
@@ -85,17 +85,17 @@ namespace Blue
 
         // 창 메시지 업데이트.
         UpdateWindow(handle);
-    }
+	}
 
-    Window::~Window()
-    {
+	Window::~Window()
+	{
         // 클래스 등록 해제.
         UnregisterClass(className.c_str(), instance);
-    }
+	}
 
-    void Window::SetWidthHeight(uint32 width, uint32 height)
-    {
-        this->width = width;
-        this->height = height;
-    }
+	void Window::SetWidthHeight(uint32 width, uint32 height)
+	{
+		this->width = width;
+		this->height = height;
+	}
 }

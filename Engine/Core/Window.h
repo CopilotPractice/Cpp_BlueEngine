@@ -10,8 +10,8 @@ namespace Blue
 	class Window
 	{
 	public:
-		Window(uint32 width,
-			uint32 height,
+		Window(uint32 width, 
+			uint32 height, 
 			const std::wstring& title,
 			HINSTANCE instance,
 			WNDPROC messageProcedure

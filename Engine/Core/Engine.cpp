@@ -1,6 +1,10 @@
 #include "Engine.h"
 #include "Window.h"
 #include "../Render/Renderer.h"
+#include "Resource/ShaderLoader.h"
+#include "Resource/TextureLoader.h"
+#include "Resource/ModelLoader.h"
+
 
 namespace Blue
 {
@@ -21,6 +25,15 @@ namespace Blue
 			width, height, title, hInstance, WindowProc
 		);
 
+		// 셰이더 로더 객체 생성.
+		shaderLoader = std::make_unique<ShaderLoader>();
+
+		// 텍스처 로더 객체 생성.
+		textureLoader = std::make_unique<TextureLoader>();
+
+		// 모델 로더 객체 생성.
+		modelLoader = std::make_unique<ModelLoader>(); // 생성을 명시적으로 해줘야 
+
 		// 렌더러 생성.
 		renderer = std::make_shared<Renderer>(
 			width, height, window->Handle()
@@ -34,14 +47,13 @@ namespace Blue
 	void Engine::Run()
 	{
 		// 메시지 처리 루프.
-		MSG msg = {}; 
+		MSG msg = {};
 		while (msg.message != WM_QUIT)
 		{
 			// 창에 메시지가 들어올때 실행.
-			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // PeekMessage = MSG 구조체에 값을 저장하고 0이 아닌 값 반환
-				                                           // 메시지 없으면 GetMessage와 다르게 무한정 기다리지 않고 0 리턴
+			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 			{
-				// 메시지 번역
+				// 메시지 번역.
 				TranslateMessage(&msg);
 
 				// 메시지 전달.
