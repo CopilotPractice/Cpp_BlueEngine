@@ -11,6 +11,12 @@ cbuffer Transform : register(b0)
     matrix worldMatrix;
 };
 
+// Camera Buffer.
+cbuffer Camera : register(b1)
+{
+    matrix view;
+};
+
 struct VertexOutput
 {
     float4 position : SV_POSITION;
@@ -21,9 +27,10 @@ struct VertexOutput
 VertexOutput main(VertexInput input)
 {
     VertexOutput output;
-    //output.position = float4(input.position, 1);       행렬이 gpu쪽에서 안 넘어갔을 때
+    //output.position = float4(input.position, 1);
     output.position = mul(float4(input.position, 1), worldMatrix);
-    //                                                  TRS가 곱해져서 들어옴
+    output.position = mul(output.position, view);
+    
     output.color = input.color;
     output.texCoord = input.texCoord;
     

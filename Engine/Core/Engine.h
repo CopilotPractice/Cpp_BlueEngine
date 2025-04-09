@@ -21,6 +21,9 @@ namespace Blue
 		// 엔진 실행 함수.
 		void Run();
 
+		// 메인 레벨 설정 함수.
+		void SetLevel(std::shared_ptr<class Level> newLevel);
+
 		// 윈도우 메시지 처리 루프.
 		static LRESULT CALLBACK WindowProc(
 			HWND handle,
@@ -31,12 +34,16 @@ namespace Blue
 		// 싱글톤 접근 함수.
 		static Engine& Get();
 
+		void Quit();
+
 		// Getter.
 		ID3D11Device& Device() const;
 		ID3D11DeviceContext& Context() const;
 
 	protected:
 		
+		bool isQuit = false;
+
 		// 창 객체.
 		std::shared_ptr<class Window> window;
 
@@ -48,9 +55,15 @@ namespace Blue
 
 		// 텍스처 로더 객체.
 		std::unique_ptr<class TextureLoader> textureLoader;
-
+		
 		// 모델 로더 객체.
 		std::unique_ptr<class ModelLoader> modelLoader;
+
+		//입력 관리자 객체
+		std::unique_ptr<class InputController> inputController;
+
+		// 메인 레벨.
+		std::shared_ptr<class Level> mainLevel;
 
 		// 싱글톤 객체.
 		static Engine* instance;

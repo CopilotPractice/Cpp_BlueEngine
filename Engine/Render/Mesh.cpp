@@ -18,12 +18,12 @@ namespace Blue
 		this->indices.assign(indices.begin(), indices.end());
 
 		D3D11_BUFFER_DESC vertexbufferDesc = {};
-		vertexbufferDesc.ByteWidth = stride * (uint32)vertices.size(); // 버퍼의 전체 크기
+		vertexbufferDesc.ByteWidth = stride * (uint32)vertices.size();
 		vertexbufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		// 정점 데이터.
 		D3D11_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pSysMem = vertices.data(); // 실제 정점 정보
+		vertexData.pSysMem = vertices.data();
 
 		// 장치 얻어오기.
 		ID3D11Device& device = Engine::Get().Device();
@@ -83,7 +83,7 @@ namespace Blue
 		}
 	}
 
-	void MeshData::Bind() // 그래픽카드에 리소스를 전달하는 행위
+	void MeshData::Bind()
 	{
 		// 컨텍스트 얻어오기.
 		static ID3D11DeviceContext& context = Engine::Get().Context();
@@ -95,8 +95,7 @@ namespace Blue
 	}
 
 	void MeshData::UpdateVertexBuffer(const std::vector<Vertex>& vertices)
-	{// 행렬만들고 cpu 처리 테스트
-
+	{
 		// 파라미터 복사.
 		this->vertices.assign(vertices.begin(), vertices.end());
 		
@@ -139,34 +138,48 @@ namespace Blue
 	{
 	}
 
-	void Mesh::Draw()
+	uint32 Mesh::SubMeshCount() const
 	{
-		// 컨텍스트 얻어오기.
-		static ID3D11DeviceContext& context = Engine::Get().Context();
-
-		//트랜스폼 바인딩
-		transform.Bind(); // 엑터가 현재 없어서 Mesh에서 임시 처리 할 수 있게
-
-		// 루프 순회하면서 바인딩 & 드로우.
-		// 현재 매쉬 1개 = 나중에 서브매쉬 쓸 예정
-		for (int ix = 0; ix < (int32)meshes.size(); ++ix)
-		{
-			//원래 리소스 가져오기
-			auto mesh = meshes[ix].lock();
-			auto shader = shaders[ix].lock();
-
-			//리소스 문제 없으면 그리기
-			if (mesh && shader)
-			{
-				mesh->Bind();
-				shader->Bind();
-				context.DrawIndexed(mesh->IndexCount(), 0, 0);
-			}
-
-			//meshes[ix]->Bind();
-			//shaders[ix].lock()->Bind(); // 매쉬와 쉐이더는 하나여야함
-			//
-			//context.DrawIndexed(meshes[ix]->IndexCount(), 0, 0);
-		}
+		return (uint32)meshes.size();
 	}
+
+	std::weak_ptr<MeshData> Mesh::GetSubMesh(int index) const
+	{
+		// 예외 처리.
+		if (index < 0 || index >= (int)meshes.size())
+		{
+			return std::weak_ptr<MeshData>();
+		}
+
+		return meshes[index];
+	}
+
+	//void Mesh::Draw()
+	//{
+	//	// 컨텍스트 얻어오기.
+	//	static ID3D11DeviceContext& context = Engine::Get().Context();
+
+	//	// 트랜스폼 바인딩.
+	//	transform.Bind();
+
+	//	// 루프 순회하면서 바인딩 & 드로우.
+	//	for (int ix = 0; ix < (int32)meshes.size(); ++ix)
+	//	{
+	//		// 원래 리소스 가져오기.
+	//		auto mesh = meshes[ix].lock();
+	//		auto shader = shaders[ix].lock();
+
+	//		// 리소스에 문제가 없으면 그리기.
+	//		if (mesh && shader)
+	//		{
+	//			mesh->Bind();
+	//			shader->Bind();
+	//			context.DrawIndexed(mesh->IndexCount(), 0, 0);
+	//		}
+
+	//		//meshes[ix]->Bind();
+	//		//shaders[ix].lock()->Bind();
+	//		//context.DrawIndexed(meshes[ix]->IndexCount(), 0, 0);
+	//	}
+	//}
 }

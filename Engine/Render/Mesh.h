@@ -4,7 +4,7 @@
 #include <memory>
 #include <d3d11.h>
 #include "Vertex.h"
-#include "../Core/Type.h"
+#include "Core/Type.h"
 #include "Math/Transform.h"
 
 namespace Blue
@@ -28,9 +28,9 @@ namespace Blue
 		// 정점 데이터.
 		std::vector<Vertex> vertices;
 		uint32 stride = 0;
-		ID3D11Buffer* vertexBuffer = nullptr; // 메모리 덩어리
+		ID3D11Buffer* vertexBuffer = nullptr;
 
-		// 인덱스 데이터.              (점의 순서)
+		// 인덱스 데이터.
 		std::vector<uint32> indices;
 		ID3D11Buffer* indexBuffer = nullptr;
 	};
@@ -41,17 +41,22 @@ namespace Blue
 		Mesh();
 		virtual ~Mesh() = default;
 
-		virtual void Draw();
+		//virtual void Draw();
 
-		//@Temp : 트랜스폼 정보(임시) -> 현재 엑터가 없어서 임시로
-		Transform transform;
+		// @Temp: 임시 트랜스폼.
+		//Transform transform;
 
-
+		// 서브 메시 개수 반환 Getter.
+		uint32 SubMeshCount() const;
+		
+		// 서브 메시 반환 Getter.
+		std::weak_ptr<MeshData> GetSubMesh(int index) const;
 
 	protected:
 		//std::vector<std::shared_ptr<MeshData>> meshes;
-		std::vector<std::weak_ptr<MeshData>> meshes; // 데이터를 가지는건 똑같은데, 약한참조(같은 모델은 복사하지 않음)
+		std::vector<std::weak_ptr<MeshData>> meshes;
+
 		//std::vector<std::shared_ptr<class Shader>> shaders;
-		std::vector<std::weak_ptr<class Shader>> shaders;
+		//std::vector<std::weak_ptr<class Shader>> shaders;
 	};
 }

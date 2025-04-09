@@ -7,48 +7,48 @@
 #include "QuadMesh.h"
 #include "Core/Common.h"
 
+#include "Level/Level.h"
+#include "Actor/Actor.h"
+
 namespace Blue
-{
-	//                                                 창의 포인터
+{//화면을 그리는 것을 주도적으로 하는 클래스
 	Renderer::Renderer(uint32 width, uint32 height, HWND window)
 	{
 		// 장치 생성에 사용하는 옵션.
 		uint32 flag = 0u;
 
 #if _DEBUG
-		flag |= D3D11_CREATE_DEVICE_DEBUG; // 디버그 모드일 때 flag
-		                                   // 이렇게 지정해줘야 디버그 정보를 더 많이 줌
+		flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 		// 생성할 라이브러리 버전.
 		D3D_FEATURE_LEVEL featureLevels[] =
 		{
-			D3D_FEATURE_LEVEL_11_1, // 가장 맨처음 생성 시도 (실패하면 아래꺼)
+			D3D_FEATURE_LEVEL_11_1,
 			D3D_FEATURE_LEVEL_11_0,
 		};
 
 		D3D_FEATURE_LEVEL outFeatureLevel;
 
-		// 장치 생성
-		D3D11CreateDevice(
-			nullptr,     //파라미터의 어댑터는 그래픽카드의 정보
-			D3D_DRIVER_TYPE_HARDWARE, //
+		// 장치 생성.
+		ThrowIfFailed(D3D11CreateDevice(
+			nullptr,
+			D3D_DRIVER_TYPE_HARDWARE,
 			nullptr,
 			flag,
 			featureLevels,
 			_countof(featureLevels),
-			D3D11_SDK_VERSION, //현재 버전에서 다이렉트x 설치된 버전을 알려줌
+			D3D11_SDK_VERSION,
 			&device,
-			nullptr,     // outFeatureLevel, = feature 버전 알려줌
+			&outFeatureLevel,
 			&context
-		);
+		), TEXT("Failed to create devices."));
 
-
+		// IDXGIFactory 리소스 생성.
 		IDXGIFactory* factory = nullptr;
 		//CreateDXGIFactory(__uuidof(factory), reinterpret_cast<void**>(&factory));
-		ThrowIfFailed(CreateDXGIFactory(IID_PPV_ARGS(&factory))
-		, TEXT("Faiiled to create dxgiiifactory."));
-		
+		ThrowIfFailed(CreateDXGIFactory(IID_PPV_ARGS(&factory)), 
+			TEXT("Failed to create dxgifactory."));
 
 		// 스왑 체인 정보 구조체.
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = { };
@@ -61,43 +61,54 @@ namespace Blue
 		swapChainDesc.BufferDesc.Width = width;
 		swapChainDesc.BufferDesc.Height = height;
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // 버퍼교환하는 이펙트, 모니터의 화면주사율과 맞춰서 보정함
+		
 
 		//D3D_FEATURE_LEVEL targetLevel;
 
 		// 장치 생성.
-		/*ThrowIfFailed(D3D11CreateDeviceAndSwapChain(
-			nullptr,
-			D3D_DRIVER_TYPE_HARDWARE,
-			nullptr,
-			flag,
-			featureLevels,
-			_countof(featureLevels),
-			D3D11_SDK_VERSION,
-			&swapChainDesc,
-			&swapChain,
-			&device,
-			nullptr,
-			&context
-		), TEXT("Failed to create devices"));*/
+		//ThrowIfFailed(D3D11CreateDeviceAndSwapChain(
+		//	nullptr,
+		//	D3D_DRIVER_TYPE_HARDWARE,
+		//	nullptr,
+		//	flag,
+		//	featureLevels,
+		//	_countof(featureLevels),
+		//	D3D11_SDK_VERSION,
+		//	&swapChainDesc,
+		//	&swapChain,
+		//	&device,
+		//	nullptr,
+		//	&context
+		//), TEXT("Failed to create devices"));
 
+		// SwapChain 생성.
 		ThrowIfFailed(factory->CreateSwapChain(
 			device,
 			&swapChainDesc,
 			&swapChain
-		), TEXT("Failed to create a swap chain"));
+		), TEXT("Failed to create a swap chain."));
 
 		// 렌더 타겟 뷰 생성.
 		ID3D11Texture2D* backbuffer = nullptr;
+		//swapChain->GetBuffer(
+		//	0,
+		//	__uuidof(backbuffer),
+		//	reinterpret_cast<void**>(&backbuffer)
+		//);
 
+		ThrowIfFailed(swapChain->GetBuffer(
+			0, 
+			IID_PPV_ARGS(&backbuffer)
+		), TEXT("Failed to get back buffer"));
 
-		ThrowIfFailed(swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer))
-			, TEXT("Failed to get back buffer"));
-
-		
 		ThrowIfFailed(device->CreateRenderTargetView(
-			backbuffer, nullptr, &renderTargetView
+			backbuffer, nullptr, &renderTargetView // &renderTargetView 그림을 그리는 부분
 		), TEXT("Failed to create render target view"));
+
+		//사용한 리소스 해제, 화면 크기 대응해서 리소스를 해제할 때 문제 생길 가능성 有
+		backbuffer->Release();
+		backbuffer = nullptr;
 
 
 		// 렌더 타겟 뷰 바인딩(연결).
@@ -117,36 +128,34 @@ namespace Blue
 
 	Renderer::~Renderer()
 	{
+		//DX 리소스 해제
+		if (context)
+		{
+			context->Release();
+			context = nullptr;
+		}
+		if (swapChain)
+		{
+			swapChain->Release();
+			swapChain = nullptr;
+		}
+
+		if (renderTargetView)
+		{
+			renderTargetView->Release();
+			renderTargetView = nullptr;
+		}
+
+		if (device)
+		{
+			device->Release();
+			device = nullptr;
+		}
 	}
 
-	void Renderer::Draw()
+	// Ctrl K / Ctrl O.
+	void Renderer::Draw(std::shared_ptr<Level> level)
 	{
-		// @임시/Test
-		if (mesh == nullptr)
-		{
-			//mesh = std::make_unique<TriangleMesh>();
-			mesh = std::make_unique<QuadMesh>();
-			mesh->transform.scale = Vector3::One * 0.5f;
-			mesh->transform.position.x = 0.5f;
-		}
-		if (mesh2 == nullptr)
-		{
-			//mesh = std::make_unique<TriangleMesh>();
-			mesh2 = std::make_unique<QuadMesh>();
-			mesh2->transform.scale = Vector3::One * 0.5f;
-			mesh2->transform.position.x = -0.5f;
-		}
-
-		if (mesh3 == nullptr)
-		{
-			//mesh = std::make_unique<TriangleMesh>();
-			mesh3 = std::make_unique<TriangleMesh>();
-			mesh3->transform.scale = Vector3::One * 0.5f;
-			mesh3->transform.position.y = 0.5f;
-		}
-
-
-
 		// 그리기 전 작업 (BeginScene).
 		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
@@ -154,14 +163,30 @@ namespace Blue
 		float color[] = { 0.6f, 0.7f, 0.8f, 1.0f };
 		context->ClearRenderTargetView(renderTargetView, color);
 
-		// @Test.
-		mesh->Update(1.0f / 60.0f);
-		mesh2->Update(1.0f / 60.0f);
+		// Draw.
 
-		// 드로우.
-		mesh->Draw();
-		mesh2->Draw();  //그려질 물체가 2개니까 update, draw 두번씩
-		mesh3->Draw();
+		// 카메라 바인딩.
+		if (level->GetCamera())
+		{
+			level->GetCamera()->Draw();
+		}
+
+		for (uint32 ix = 0; ix < level->ActorCount(); ++ix)
+		{
+			// 액터 가져오기.
+			auto actor = level->GetActor(ix);
+
+			// Draw.
+			if (actor->IsActive())
+			{
+				//for (const auto& component : actor->components)
+				//{
+				//	// Check if component is drawable.
+				//}
+
+				actor->Draw();
+			}
+		}
 
 		// 버퍼 교환. (EndScene/Present).
 		swapChain->Present(1u, 0u);
