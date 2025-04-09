@@ -75,7 +75,7 @@ namespace Blue
 				sscanf_s(line, "vn %f %f %f", &normal.x, &normal.y, &normal.z);
 				normals.emplace_back(normal);
 			}
-			else if (strcmp(header, "f") == 0)
+			else if (strcmp(header, "f") == 0) //¸é Á¶¸³
 			{
 				int v1, v2, v3;
 				int t1, t2, t3;
@@ -84,9 +84,22 @@ namespace Blue
 				sscanf_s(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
 					&v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
 
-				vertices.emplace_back(positions[v1 - 1], Vector3::One, texCoords[t1 - 1]);
-				vertices.emplace_back(positions[v2 - 1], Vector3::One, texCoords[t2 - 1]);
-				vertices.emplace_back(positions[v3 - 1], Vector3::One, texCoords[t3 - 1]);
+				vertices.emplace_back(
+					positions[v1 - 1], 
+					Vector3::One, 
+					texCoords[t1 - 1],
+					normals[n1 -1]);
+
+
+				vertices.emplace_back(positions[v2 - 1], 
+					Vector3::One, 
+					texCoords[t2 - 1],
+					normals[n2 - 1]);
+
+				vertices.emplace_back(positions[v3 - 1], 
+					Vector3::One, 
+					texCoords[t3 - 1],
+					normals[n3 - 1]);
 			}
 		}
 

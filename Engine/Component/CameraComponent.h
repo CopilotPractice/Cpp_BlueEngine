@@ -11,6 +11,9 @@ namespace Blue
 	{
 		// 뷰 변환 행렬.
 		Matrix4 viewMatrix;
+
+		//투영 변환 행렬
+		Matrix4 projectionMatrix;
 	};
 
 	class CameraComponent : public Component
@@ -18,6 +21,8 @@ namespace Blue
 	public:
 		CameraComponent();
 		~CameraComponent() = default;
+
+		virtual void Tick(float deltaTime) override;
 
 		virtual void Draw() override;
 

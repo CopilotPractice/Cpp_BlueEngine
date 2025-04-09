@@ -16,6 +16,7 @@ namespace Blue
 			uint32 height,
 			const std::wstring& title,
 			HINSTANCE instance);
+
 		virtual ~Engine();
 
 		// 엔진 실행 함수.
@@ -23,6 +24,7 @@ namespace Blue
 
 		// 메인 레벨 설정 함수.
 		void SetLevel(std::shared_ptr<class Level> newLevel);
+
 
 		// 윈도우 메시지 처리 루프.
 		static LRESULT CALLBACK WindowProc(
@@ -34,11 +36,18 @@ namespace Blue
 		// 싱글톤 접근 함수.
 		static Engine& Get();
 
+		//화면 크기 변경 이벤트 대응 함수
+		void OnResize(uint32 width, uint32 height);
+
 		void Quit();
 
 		// Getter.
 		ID3D11Device& Device() const;
 		ID3D11DeviceContext& Context() const;
+
+		uint32 Width() const;
+		uint32 Height() const;
+
 
 	protected:
 		

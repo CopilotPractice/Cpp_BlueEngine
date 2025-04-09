@@ -98,4 +98,8 @@ namespace Blue
     {
         return *instance;
     }
+    bool InputController::IsVaild()
+    {
+        return instance != nullptr;
+    }
 }
