@@ -93,6 +93,12 @@
     <ClCompile Include="Core\InputController.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Render\SphereMesh.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\CameraActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Window.h">
@@ -182,6 +188,12 @@
     <ClInclude Include="Core\InputController.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Render\SphereMesh.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\CameraActor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSLShader\DefaultVertexShader.hlsl" />
@@ -193,5 +205,6 @@
     <None Include="Resource\ShaderLoader.inl">
       <Filter>헤더 파일</Filter>
     </None>
+    <None Include="HLSLShader\Common.hlsli" />
   </ItemGroup>
 </Project>

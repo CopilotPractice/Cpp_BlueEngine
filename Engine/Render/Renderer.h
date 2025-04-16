@@ -37,8 +37,11 @@ namespace Blue
 		ID3D11DeviceContext* context = nullptr;
 		IDXGISwapChain* swapChain = nullptr;
 
-		// 버퍼.
+		// 버퍼. 메인 화면
 		ID3D11RenderTargetView* renderTargetView = nullptr;
+
+		// 뎁스 버퍼
+		ID3D11DepthStencilView* depthStencilView = nullptr; // 대부분 View라고 붙
 
 		// 뷰포트.
 		D3D11_VIEWPORT viewport;

@@ -26,4 +26,8 @@ namespace Blue
 			texture.lock()->Bind();
 		}
 	}
+	void TextureMappingShader::SetTexture(const std::weak_ptr<class Texture>& newTexture)
+	{
+		texture = newTexture;
+	}
 }
