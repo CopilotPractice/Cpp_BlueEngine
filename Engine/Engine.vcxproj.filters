@@ -200,6 +200,8 @@
     <FxCompile Include="HLSLShader\DefaultPixelShader.hlsl" />
     <FxCompile Include="HLSLShader\TextureMappingPixelShader.hlsl" />
     <FxCompile Include="HLSLShader\TextureMappingVertexShader.hlsl" />
+    <FxCompile Include="HLSLShader\NormalMappingVertexShader.hlsl" />
+    <FxCompile Include="HLSLShader\NormalMappingPixelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\ShaderLoader.inl">

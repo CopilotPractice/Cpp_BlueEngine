@@ -40,20 +40,7 @@ float4 main(PixelInput input) : SV_TARGET
     float4 diffuse = texColor * nDotl;
     float4 finalColor = ambient + diffuse;
     
-    //float specular = CalcPhong(worldNormal, lightDir, input.cameraDirection);
-    float specular = 0;
-    if(nDotl)
-    {
-        float3 viewDirection = normalize(input.cameraDirection);
-        float3 halfVector = normalize((-lightDir) + (-viewDirection));
-        
-        //nDoth
-        float nDoth = saturate(dot(worldNormal, halfVector));
-        float shineness = 32.0f;
-        specular = pow(nDoth, shineness);
-
-    }
-    
+    float specular = CaluBlinnPhong(worldNormal, lightDir, input.cameraDirection);
     
     finalColor += specular;
     return finalColor;

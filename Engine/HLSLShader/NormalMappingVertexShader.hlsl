@@ -5,7 +5,7 @@ struct VertexInput
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL; // 조명처리
     float3 tangent : TANGENT;
-    float3 bitangent : BITANGENT; 
+    float3 bitangent : BITANGENT;
 };
 
 // ConstantBuffer.
@@ -35,8 +35,8 @@ struct VertexOutput
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
     float3 cameraDirection : TEXCOORD1;
-    float3 tangent : TANGENT; 
-    float3 bitangent : BITANGENT; 
+    float3 tangent : TANGENT;
+    float3 bitangent : BITANGENT;
 };
 
 VertexOutput main(VertexInput input)
@@ -56,8 +56,8 @@ VertexOutput main(VertexInput input)
     
     // ->transpose(inverse(worldMatrix));
     output.normal = mul(input.normal, (float3x3) worldMatrix); //셰이더에서의 모든 변환은 공간을 맞추고 시작
-    output.tangent = mul(input.tangent, (float3x3) worldMatrix); 
-    output.bitangent = mul(input.bitangent, (float3x3) worldMatrix); 
+    output.tangent = mul(input.tangent, (float3x3) worldMatrix);
+    output.bitangent = mul(input.bitangent, (float3x3) worldMatrix);
     
     
     output.cameraDirection = normalize(worldPosition - cameraPosition);

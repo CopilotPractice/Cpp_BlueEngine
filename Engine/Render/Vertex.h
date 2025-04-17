@@ -33,5 +33,11 @@ namespace Blue
 		// 노멀(법선, Normal) 벡터
 		Vector3 normal; // 3차원의 방향 값, 점의 방향
 
+		// 탄젠트 벡터
+		Vector3 tangent; // 3차원의 방향 값, 점의 방향
+
+		// 바이탄젠트 벡터
+		Vector3 bitangent; // 3차원의 방향 값, 점의 방향
+
 	};
 }
